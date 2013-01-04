@@ -1,0 +1,16 @@
+{
+    "name": "v3labs/doctrine-extensions",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/v3labs/doctrine-extensions"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0", 
+        "doctrine/orm": ">=2.3.0"
+    },
+    "autoload": {
+        "psr-0": {"V3labs" : "src/"}
+    }
+}
