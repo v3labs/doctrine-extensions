@@ -17,7 +17,7 @@ class TimestampableListener implements EventSubscriber
             return;
         }
 
-        if (in_array('V3labs\DoctrineBehaviours\Timestampable\Timestampable', $classMetadata->reflClass->getTraitNames())) {
+        if (in_array(__NAMESPACE__ . "\\Timestampable", $classMetadata->reflClass->getTraitNames())) {
             /* Map fields */
             $classMetadata->mapField(['fieldName' => 'createdAt', 'type' => 'datetime', 'nullable' => true]);
             $classMetadata->mapField(['fieldName' => 'updatedAt', 'type' => 'datetime', 'nullable' => true]);
