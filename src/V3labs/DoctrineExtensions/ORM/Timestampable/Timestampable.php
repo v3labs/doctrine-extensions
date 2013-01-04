@@ -36,7 +36,7 @@ trait Timestampable {
         $this->updatedAt = $updatedAt;
     }
 
-    protected function updateTimestampableFields()
+    public function updateTimestampableFields()
     {
         if (is_null($this->createdAt)) {
             $this->createdAt = new DateTime('now');
