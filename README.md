@@ -1,9 +1,8 @@
 V3 Labs Doctrine ORM Extensions
 ===============================
 
-I am aware that there are several other libraries like this, but in each of them there are things I don't like.
-
-This is a work in progress!
+This is a work in progress! Things will change.
+A translatable extension is in the works.
 
 Timestampable
 -------------
