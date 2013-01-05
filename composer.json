@@ -1,6 +1,7 @@
 {
     "name": "v3labs/doctrine-extensions",
     "license": "MIT",
+    "description": "A set of minimalistic Doctrine 2 ORM extensions.",
     "repositories": [
         {
             "type": "vcs",
