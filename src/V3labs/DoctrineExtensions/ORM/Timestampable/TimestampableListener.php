@@ -2,10 +2,10 @@
 
 namespace V3labs\DoctrineExtensions\ORM\Timestampable;
 
-use Doctrine\ORM\Event\LoadClassMetadataEventArgs,
-    Doctrine\Common\EventSubscriber,
-    Doctrine\ORM\Events;
-
+use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
+use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\Events;
+use V3labs\DoctrineExtensions\Common\ClassUtils;
 
 class TimestampableListener implements EventSubscriber
 {
@@ -17,14 +17,24 @@ class TimestampableListener implements EventSubscriber
             return;
         }
 
-        if (in_array(__NAMESPACE__ . "\\Timestampable", $classMetadata->reflClass->getTraitNames())) {
-            /* Map fields */
-            $classMetadata->mapField(['fieldName' => 'createdAt', 'type' => 'datetime', 'nullable' => true]);
-            $classMetadata->mapField(['fieldName' => 'updatedAt', 'type' => 'datetime', 'nullable' => true]);
+        if (ClassUtils::classUsesTrait($classMetadata->reflClass->getName(), __NAMESPACE__ . "\\Timestampable")) {
 
-            /* Add lifecycle callbacks */
-            $classMetadata->addLifecycleCallback('updateTimestampableFields', Events::prePersist);
-            $classMetadata->addLifecycleCallback('updateTimestampableFields', Events::preUpdate);
+            if (!$classMetadata->hasField('createdAt') && !$classMetadata->hasField('updatedAt')) {
+                $classMetadata->mapField([
+                    'fieldName' => 'createdAt',
+                    'type'      => 'datetime',
+                    'nullable'  => true
+                ]);
+
+                $classMetadata->mapField([
+                    'fieldName' => 'updatedAt',
+                    'type'      => 'datetime',
+                    'nullable'  => true
+                ]);
+
+                $classMetadata->addLifecycleCallback('updateTimestampableFields', Events::prePersist);
+                $classMetadata->addLifecycleCallback('updateTimestampableFields', Events::preUpdate);
+            }
         }
     }
 

@@ -2,13 +2,14 @@
 
 namespace V3labs\DoctrineExtensions\ORM\Translatable;
 
-use Doctrine\ORM\Event\LoadClassMetadataEventArgs,
-    Doctrine\Common\EventSubscriber,
-    Doctrine\ORM\Events;
+use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
+use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\Events;
+use V3labs\DoctrineExtensions\Common\ClassMetadataUtils;
+use V3labs\DoctrineExtensions\Common\ClassUtils;
 
-class TranslatableListener implements EventSubscriber {
-
-
+class TranslatableListener implements EventSubscriber
+{
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
         $classMetadata = $eventArgs->getClassMetadata();
@@ -17,37 +18,52 @@ class TranslatableListener implements EventSubscriber {
             return;
         }
 
-        if (in_array(__NAMESPACE__ . "\\Translatable", $classMetadata->reflClass->getTraitNames())) {
-
-            $classMetadata->mapOneToMany([
-                'fieldName'    => 'translations',
-                'mappedBy'     => 'translatable',
-                'indexBy'      => 'locale',
-                'cascade'      => ['persist', 'merge', 'remove'],
-                'targetEntity' => $classMetadata->getName() . 'Translation'
-            ]);
+        if (ClassUtils::classUsesTrait($classMetadata->reflClass->getName(), __NAMESPACE__ . '\\Translatable')) {
+            if (!$classMetadata->hasAssociation('translations')) {
+                $classMetadata->mapOneToMany([
+                    'fieldName'     => 'translations',
+                    'mappedBy'      => 'translatable',
+                    'indexBy'       => 'locale',
+                    'cascade'       => ['persist', 'merge', 'remove'],
+                    'orphanRemoval' => true,
+                    'targetEntity'  => $classMetadata->getName() . 'Translation',
+                ]);
+            }
         }
 
-        if (in_array(__NAMESPACE__ . "\\Translation", $classMetadata->reflClass->getTraitNames())) {
+        if (ClassUtils::classUsesTrait($classMetadata->reflClass->getName(), __NAMESPACE__ . '\\Translation')) {
+            if (!$classMetadata->hasAssociation('translatable')) {
+                $classMetadata->mapManyToOne([
+                    'fieldName'    => 'translatable',
+                    'inversedBy'   => 'translations',
+                    'joinColumns'  => [
+                        [
+                            'name'                 => 'translatable_id',
+                            'referencedColumnName' => 'id',
+                            'onDelete'             => 'CASCADE'
+                        ]
+                    ],
+                    'targetEntity' => substr($classMetadata->getName(), 0, -11)
+                ]);
+            }
 
-            /** Map locale field */
-            $classMetadata->mapField(['fieldName' => 'locale', 'type' => 'string']);
+            if (!$classMetadata->hasField('locale')) {
+                $classMetadata->mapField([
+                    'fieldName' => 'locale',
+                    'type'      => 'string'
+                ]);
+            }
 
-            $classMetadata->mapManyToOne([
-                'fieldName'    => 'translatable',
-                'inversedBy'   => 'translations',
-                'joinColumns'  => [
-                    [
-                        'name'                 => 'translatable_id',
-                        'referencedColumnName' => 'id',
-                        'onDelete'             => 'CASCADE'
-                    ]
-                ],
-                'targetEntity' => substr($classMetadata->getName(), 0, -11)
-            ]);
-
+            $translationConstraint = $classMetadata->getTableName() . '_unique_translation';
+            if (!ClassMetadataUtils::hasUniqueConstraint($classMetadata, $translationConstraint)) {
+                $classMetadata->setPrimaryTable([
+                    'uniqueConstraints' => [[
+                        'name'    => $translationConstraint,
+                        'columns' => ['translatable_id', 'locale']
+                    ]],
+                ]);
+            }
         }
-
     }
 
     public function getSubscribedEvents()

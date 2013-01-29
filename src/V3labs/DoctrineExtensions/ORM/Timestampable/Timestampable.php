@@ -43,5 +43,7 @@ trait Timestampable {
         }
 
         $this->updatedAt = new DateTime('now');
+
+        echo 'called_once' . "<br />";
     }
 }

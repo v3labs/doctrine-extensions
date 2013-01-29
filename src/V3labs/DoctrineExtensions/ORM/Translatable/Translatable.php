@@ -3,6 +3,7 @@
 namespace V3labs\DoctrineExtensions\ORM\Translatable;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use \RuntimeException;
 
 trait Translatable {
 
@@ -13,7 +14,6 @@ trait Translatable {
 
     public function getTranslations()
     {
-
         if (!$this->translations) {
             $this->translations = new ArrayCollection();
         }
@@ -41,7 +41,7 @@ trait Translatable {
         $translation = $this->getTranslations()->get($locale);
 
         if (!$translation) {
-            $class = self::getTranslationEntityClass();
+            $class = $this->getTranslationEntityClass();
             $translation = new $class();
             $translation->setLocale($locale);
 
@@ -52,8 +52,20 @@ trait Translatable {
         return $translation;
     }
 
-    public static function getTranslationEntityClass()
+    public function getTranslationEntityClass()
     {
-        return __CLASS__ . 'Translation';
+        $class = get_class($this);
+
+        do {
+            $translationClass = "{$class}Translation";
+
+            if (class_exists($translationClass)) {
+                return $translationClass;
+            }
+
+            $class = get_parent_class($class);
+        } while (!empty($class));
+
+        throw new RuntimeException(sprintf('Translation class for %s cannot be found.', get_class($this)));
     }
 }
