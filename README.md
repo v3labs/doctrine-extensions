@@ -1,8 +1,7 @@
 V3 Labs Doctrine ORM Extensions
 ===============================
 
-This is a work in progress! Things will change.
-A translatable extension is in the works.
+This library aims to be a minimalistic set of Doctrine 2 ORM extensions for php >=5.4. I'm developing this library for a project in my company. I am using it in production. The API is in no way stable(yet). More extensions will be added. I will try to keep the docs updated. Any help will be appreciated.
 
 Timestampable
 -------------
