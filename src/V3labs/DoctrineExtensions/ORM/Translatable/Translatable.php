@@ -54,7 +54,7 @@ trait Translatable {
 
     public function getTranslationEntityClass()
     {
-        $class = get_class($this);
+        $class = __CLASS__;
 
         do {
             $translationClass = "{$class}Translation";
