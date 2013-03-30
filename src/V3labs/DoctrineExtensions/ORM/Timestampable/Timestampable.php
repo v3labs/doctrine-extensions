@@ -2,19 +2,35 @@
 
 namespace V3labs\DoctrineExtensions\ORM\Timestampable;
 
-use Datetime;
+use DateTime;
+use DateTimeZone;
 
-trait Timestampable {
-
+trait Timestampable
+{
+    /**
+     * @var \DateTime
+     */
     protected $createdAt;
 
+    /**
+     * @var \DateTime
+     */
     protected $updatedAt;
+
+    /**
+     * @return \DateTimeZone
+     */
+    public function getTimestampableTimeZone()
+    {
+        return new DateTimeZone(date_default_timezone_get() ?: 'UTC');
+    }
 
     /**
      * @return DateTime
      */
     public function getCreatedAt()
     {
+        $this->createdAt->setTimezone($this->getTimestampableTimeZone());
         return $this->createdAt;
     }
 
@@ -23,6 +39,7 @@ trait Timestampable {
      */
     public function getUpdatedAt()
     {
+        $this->updatedAt->setTimezone($this->getTimestampableTimeZone());
         return $this->updatedAt;
     }
 
@@ -38,7 +55,7 @@ trait Timestampable {
 
     public function updateTimestampableFields()
     {
-        if (is_null($this->createdAt)) {
+        if (null === $this->createdAt) {
             $this->createdAt = new DateTime('now');
         }
 

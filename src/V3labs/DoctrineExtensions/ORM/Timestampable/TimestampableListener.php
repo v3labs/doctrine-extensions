@@ -22,13 +22,13 @@ class TimestampableListener implements EventSubscriber
             if (!$classMetadata->hasField('createdAt') && !$classMetadata->hasField('updatedAt')) {
                 $classMetadata->mapField([
                     'fieldName' => 'createdAt',
-                    'type'      => 'datetime',
+                    'type'      => 'datetime_utc',
                     'nullable'  => true
                 ]);
 
                 $classMetadata->mapField([
                     'fieldName' => 'updatedAt',
-                    'type'      => 'datetime',
+                    'type'      => 'datetime_utc',
                     'nullable'  => true
                 ]);
 
