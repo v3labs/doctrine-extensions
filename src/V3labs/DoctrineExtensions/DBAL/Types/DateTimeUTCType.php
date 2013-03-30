@@ -4,9 +4,10 @@ namespace V3labs\DoctrineExtensions\DBAL\Types;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\DateTimeType;
+
 use DateTime;
 use DateTimeZone;
-use Doctrine\DBAL\Types\DateTimeType;
 
 class DateTimeUTCType extends DateTimeType
 {
@@ -17,14 +18,14 @@ class DateTimeUTCType extends DateTimeType
         return self::DATETIME_UTC;
     }
 
-
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
         if ($value === null) {
             return null;
         }
 
-        return $value->format($platform->getDateTimeFormatString(), new DateTimeZone('UTC'));
+        $value->setTimeZone(new DateTimeZone('UTC'));
+        return $value->format($platform->getDateTimeFormatString());
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
