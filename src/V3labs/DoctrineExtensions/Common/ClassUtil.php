@@ -2,7 +2,7 @@
 
 namespace V3labs\DoctrineExtensions\Common;
 
-class ClassUtils
+class ClassUtil
 {
     /**
      * Checks if a class or one of its parents uses a trait recursively

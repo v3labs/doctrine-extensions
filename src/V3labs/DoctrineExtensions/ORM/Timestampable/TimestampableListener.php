@@ -5,19 +5,20 @@ namespace V3labs\DoctrineExtensions\ORM\Timestampable;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
-use V3labs\DoctrineExtensions\Common\ClassUtils;
+use V3labs\DoctrineExtensions\Common\ClassUtil;
 
 class TimestampableListener implements EventSubscriber
 {
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
         $classMetadata = $eventArgs->getClassMetadata();
+        $reflectionClass = $classMetadata->getReflectionClass();
 
-        if (is_null($classMetadata->reflClass)) {
+        if (null === $reflectionClass) {
             return;
         }
 
-        if (ClassUtils::classUsesTrait($classMetadata->reflClass->getName(), __NAMESPACE__ . "\\Timestampable")) {
+        if (ClassUtil::classUsesTrait($reflectionClass->getName(), __NAMESPACE__ . "\\Timestampable")) {
 
             if (!$classMetadata->hasField('createdAt') && !$classMetadata->hasField('updatedAt')) {
                 $classMetadata->mapField([
