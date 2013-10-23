@@ -4,7 +4,7 @@ namespace V3labs\DoctrineExtensions\Common;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
-class ClassMetadataUtils
+class ClassMetadataUtil
 {
     public static function hasUniqueConstraint(ClassMetadata $classMetadata, $name)
     {

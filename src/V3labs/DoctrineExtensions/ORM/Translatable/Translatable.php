@@ -54,7 +54,11 @@ trait Translatable {
 
     public function getTranslationEntityClass()
     {
-        $class = __CLASS__;
+        if ($this instanceof \Doctrine\ORM\Proxy\Proxy) {
+            $class = get_parent_class($this);
+        } else {
+            $class = get_class($this);
+        }
 
         do {
             $translationClass = "{$class}Translation";

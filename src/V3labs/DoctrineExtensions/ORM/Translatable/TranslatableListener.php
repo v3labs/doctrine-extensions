@@ -5,20 +5,21 @@ namespace V3labs\DoctrineExtensions\ORM\Translatable;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
-use V3labs\DoctrineExtensions\Common\ClassMetadataUtils;
-use V3labs\DoctrineExtensions\Common\ClassUtils;
+use V3labs\DoctrineExtensions\Common\ClassMetadataUtil;
+use V3labs\DoctrineExtensions\Common\ClassUtil;
 
 class TranslatableListener implements EventSubscriber
 {
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
         $classMetadata = $eventArgs->getClassMetadata();
+        $reflectionClass = $classMetadata->getReflectionClass();
 
-        if (is_null($classMetadata->reflClass)) {
+        if (null === $reflectionClass) {
             return;
         }
 
-        if (ClassUtils::classUsesTrait($classMetadata->reflClass->getName(), __NAMESPACE__ . '\\Translatable')) {
+        if (ClassUtil::classUsesTrait($reflectionClass->getName(), __NAMESPACE__ . '\\Translatable')) {
             if (!$classMetadata->hasAssociation('translations')) {
                 $classMetadata->mapOneToMany([
                     'fieldName'     => 'translations',
@@ -31,7 +32,7 @@ class TranslatableListener implements EventSubscriber
             }
         }
 
-        if (ClassUtils::classUsesTrait($classMetadata->reflClass->getName(), __NAMESPACE__ . '\\Translation')) {
+        if (ClassUtil::classUsesTrait($reflectionClass->getName(), __NAMESPACE__ . '\\Translation')) {
             if (!$classMetadata->hasAssociation('translatable')) {
                 $classMetadata->mapManyToOne([
                     'fieldName'    => 'translatable',
@@ -55,7 +56,7 @@ class TranslatableListener implements EventSubscriber
             }
 
             $translationConstraint = $classMetadata->getTableName() . '_unique_translation';
-            if (!ClassMetadataUtils::hasUniqueConstraint($classMetadata, $translationConstraint)) {
+            if (!ClassMetadataUtil::hasUniqueConstraint($classMetadata, $translationConstraint)) {
                 $classMetadata->setPrimaryTable([
                     'uniqueConstraints' => [[
                         'name'    => $translationConstraint,
