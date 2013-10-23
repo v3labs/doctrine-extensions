@@ -11,6 +11,8 @@ trait Translation {
     public function setTranslatable($translatable)
     {
         $this->translatable = $translatable;
+
+        return $this;
     }
 
     public function getTranslatable()
@@ -21,6 +23,8 @@ trait Translation {
     public function setLocale($locale)
     {
         $this->locale = $locale;
+
+        return $this;
     }
 
     public function getLocale()

@@ -25,6 +25,13 @@ trait Timestampable
         return new DateTimeZone(date_default_timezone_get() ?: 'UTC');
     }
 
+    public function setCreatedAt(DateTime $createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
     /**
      * @return DateTime
      */
@@ -32,6 +39,13 @@ trait Timestampable
     {
         $this->createdAt->setTimezone($this->getTimestampableTimeZone());
         return $this->createdAt;
+    }
+
+    public function setUpdatedAt(DateTime $updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
     }
 
     /**
@@ -43,17 +57,6 @@ trait Timestampable
         return $this->updatedAt;
     }
 
-    public function setCreatedAt(DateTime $createdAt)
-    {
-        $this->createdAt = $createdAt;
-        return $this;
-    }
-
-    public function setUpdatedAt(DateTime $updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-        return $this;
-    }
 
     public function updateTimestampableFields()
     {

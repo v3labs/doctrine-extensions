@@ -16,6 +16,7 @@ trait SoftDeletable
     public function setDeletedAt(DateTime $deletedAt)
     {
         $this->deletedAt = $deletedAt;
+        return $this;
     }
 
     public function isDeleted()
