@@ -9,11 +9,11 @@ use Doctrine\ORM\Query\Parser;
 
 class ConvertTzFunction extends FunctionNode
 {
-    public $date;
+    private $date;
 
-    public $fromTimezone;
+    private $fromTimezone;
 
-    public $toTimezone;
+    private $toTimezone;
 
     public function getSql(SqlWalker $sqlWalker)
     {

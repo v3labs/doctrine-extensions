@@ -9,12 +9,7 @@ use Doctrine\ORM\Query\Parser;
 
 class YearFunction extends FunctionNode
 {
-    public $date;
-
-    public function getSql(SqlWalker $sqlWalker)
-    {
-        return 'YEAR(' . $sqlWalker->walkArithmeticPrimary($this->date) . ')';
-    }
+    private $date;
 
     public function parse(Parser $parser)
     {
@@ -22,5 +17,10 @@ class YearFunction extends FunctionNode
         $parser->match(Lexer::T_OPEN_PARENTHESIS);
         $this->date = $parser->ArithmeticPrimary();
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
+    }
+
+    public function getSql(SqlWalker $sqlWalker)
+    {
+        return 'YEAR(' . $sqlWalker->walkArithmeticPrimary($this->date) . ')';
     }
 }

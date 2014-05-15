@@ -9,7 +9,7 @@ use Doctrine\ORM\Query\SqlWalker;
 
 class GreatestFunction extends FunctionNode
 {
-    private $values = array();
+    private $values = [];
 
     public function parse(Parser $parser)
     {
@@ -30,18 +30,11 @@ class GreatestFunction extends FunctionNode
 
     public function getSql(SqlWalker $sqlWalker)
     {
-        $sql = 'GREATEST(';
+        $args = array_map(
+            function($value) use ($sqlWalker) { return $sqlWalker->walkArithmeticPrimary($value); },
+            $this->values
+        );
 
-        foreach ($this->values as $i => $value) {
-            if ($i > 0) {
-                $sql .= ', ';
-            }
-
-            $sql .= $sqlWalker->walkArithmeticPrimary($value);
-        }
-
-        $sql .= ')';
-
-        return $sql;
+        return 'GREATEST(' . implode(', ', $args) . ')';
     }
 }

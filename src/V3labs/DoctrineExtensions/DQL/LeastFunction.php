@@ -30,18 +30,11 @@ class LeastFunction extends FunctionNode
 
     public function getSql(SqlWalker $sqlWalker)
     {
-        $sql = 'LEAST(';
+        $args = array_map(
+            function($value) use ($sqlWalker) { return $sqlWalker->walkArithmeticPrimary($value); },
+            $this->values
+        );
 
-        foreach ($this->values as $i => $value) {
-            if ($i > 0) {
-                $sql .= ', ';
-            }
-
-            $sql .= $sqlWalker->walkArithmeticPrimary($value);
-        }
-
-        $sql .= ')';
-
-        return $sql;
+        return 'GREATEST(' . implode(', ', $args) . ')';
     }
 }
